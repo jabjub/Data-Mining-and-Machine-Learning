@@ -102,7 +102,7 @@ def _evaluate_fold(
         param_distributions=param_grid,
         n_iter=RANDOMIZED_SEARCH_ITER,
         cv=_inner_cv(),
-        scoring="f1_macro",
+        scoring="f1_macro", #TODO Revert back
         refit=True,
         n_jobs=-1,
         random_state=RANDOM_STATE,
@@ -248,17 +248,17 @@ def aggregate_results(df: pd.DataFrame) -> pd.DataFrame:
         .round(4)
     )
     agg.columns = ["_".join(c) for c in agg.columns]
-    return agg.sort_values("f1_macro_mean", ascending=False)
+    return agg.sort_values("f1_dropout_mean", ascending=False)   # TODO REVERT BACK TO f1_macro_mean
 
 
 def find_best_configuration(agg_df: pd.DataFrame) -> tuple[str, str]:
     """
     Selection rule (project plan §9):
-      1. Highest mean F1-macro
+      1. Highest mean F1-Balanced
       2. ROC-AUC as tie-breaker
     """
     top = agg_df.sort_values(
-        ["f1_macro_mean", "roc_auc_mean"], ascending=[False, False]
+        ["f1_dropout_mean", "roc_auc_mean"], ascending=[False, False] # TODO REVERT BACK TO f1_macro_mean
     ).iloc[0]
     idx = top.name  # (model_name, strategy)
     logger.info("Best configuration: model=%s  strategy=%s", idx[0], idx[1])
