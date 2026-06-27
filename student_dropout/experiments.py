@@ -102,7 +102,7 @@ def _evaluate_fold(
         param_distributions=param_grid,
         n_iter=RANDOMIZED_SEARCH_ITER,
         cv=_inner_cv(),
-        scoring="f1_macro", #TODO Revert back
+        scoring="f1_binary", #TODO Revert back
         refit=True,
         n_jobs=-1,
         random_state=RANDOM_STATE,
