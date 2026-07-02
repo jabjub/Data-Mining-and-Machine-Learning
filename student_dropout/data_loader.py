@@ -19,10 +19,9 @@ from student_dropout.config import (
     BINARY_FEATURES,
     CATEGORICAL_FEATURES,
     NUMERICAL_FEATURES,
-    POSITIVE_CLASS,
     SCALE_FEATURES,
     SECOND_SEM_FEATURES,
-    TARGET_COL,
+    TARGET_COL, DROPOUT_CLASS, INCLUDE_SECOND_SEM_FEATURES,
 )
 
 logger = logging.getLogger(__name__)
@@ -62,7 +61,7 @@ def _binarise_target(series: pd.Series) -> pd.Series:
     Justification (project plan §1): the goal is early dropout identification,
     not differentiation between enrolled and graduated students.
     """
-    return series.apply(lambda v: 1 if v == POSITIVE_CLASS else 0)
+    return series.apply(lambda v: 1 if v == DROPOUT_CLASS else 0)
 
 
 def _validate_columns(df: pd.DataFrame) -> None:
@@ -106,7 +105,7 @@ def prepare_data(
     y = _binarise_target(df[TARGET_COL])
 
     # ── 4.1 Drop 2nd-semester features ───────────────────────────────────────
-    cols_to_drop = [c for c in SECOND_SEM_FEATURES if c in df.columns]
+    cols_to_drop = [] if INCLUDE_SECOND_SEM_FEATURES   else [c for c in SECOND_SEM_FEATURES if c in df.columns]
     df = df.drop(columns=cols_to_drop + [TARGET_COL])
 
     # ── Verify feature presence ───────────────────────────────────────────────

@@ -47,12 +47,12 @@ def _savefig(subdir: str, name: str) -> None:
 # ── Model comparison bar chart ─────────────────────────────────────────────────
 def plot_model_comparison(df: pd.DataFrame) -> None:
     """
-    Grouped bar chart: mean F1-macro per (model, strategy) with ±1 std error bars.
+    Grouped bar chart: mean F1-dropout per (model, strategy) with ±1 std error bars.
     This is the central plot for the defence — visually answers which pipeline is best.
     """
     df = df.copy()
     df["label"] = df["model_name"] + "\n(" + df["strategy"] + ")"
-    agg = df.groupby("label")["f1_macro"].agg(["mean", "std"]).reset_index()
+    agg = df.groupby("label")["f1_dropout"].agg(["mean", "std"]).reset_index()
     agg = agg.sort_values("mean", ascending=False)
 
     fig, ax = plt.subplots(figsize=(14, 6))
@@ -72,7 +72,7 @@ def plot_model_comparison(df: pd.DataFrame) -> None:
             ha="center", va="bottom", fontsize=8, fontweight="bold",
         )
 
-    ax.set_ylabel("Mean F1-Macro (± std over outer folds)", fontsize=11)
+    ax.set_ylabel("Mean F1-Dropout (± std over outer folds)", fontsize=11)
     ax.set_title(
         f"Nested CV Model Comparison ({OUTER_CV_FOLDS}-fold outer, F1-Macro)",
         fontweight="bold", fontsize=13,
@@ -93,27 +93,26 @@ def plot_f1_boxplot(df: pd.DataFrame) -> None:
     df = df.copy()
     df["label"] = df["model_name"] + "\n(" + df["strategy"] + ")"
     order = (
-        df.groupby("label")["f1_macro"].mean()
+        df.groupby("label")["f1_dropout"].mean()
         .sort_values(ascending=False)
         .index.tolist()
     )
 
     fig, ax = plt.subplots(figsize=(14, 6))
     sns.boxplot(
-        data=df, x="label", y="f1_macro", order=order, ax=ax,
+        data=df, x="label", y="f1_dropout", order=order, ax=ax,
         color="steelblue", linewidth=1.2,
     )
     # Highlight median line in red (mirroring course Exercise-3 style)
     for patch in ax.patches:
         patch.set_alpha(0.7)
-    ax.set_title("Per-fold F1-Macro Distribution by Pipeline", fontweight="bold")
+    ax.set_title("Per-fold F1-Dropout Distribution by Pipeline", fontweight="bold")
     ax.set_xlabel("")
-    ax.set_ylabel("F1-Macro")
+    ax.set_ylabel("F1-Dropout")
     ax.tick_params(axis="x", rotation=20)
     ax.grid(axis="y", linestyle="--", alpha=0.5)
     fig.tight_layout()
     _savefig("experiments", "f1_boxplot.png")
-
 
 # ── ROC curves ────────────────────────────────────────────────────────────────
 def plot_roc_curves(all_results: list[dict[str, Any]]) -> None:
@@ -185,6 +184,37 @@ def plot_confusion_matrices(all_results: list[dict[str, Any]]) -> None:
         logger.info("Saved: %s", path)
 
 
+def print_summary_table(agg_df: pd.DataFrame) -> None:
+    logger.info("\n=== AGGREGATED RESULTS (mean ± std across %d outer folds) ===", OUTER_CV_FOLDS)
+    with pd.option_context("display.max_rows", 40, "display.max_columns", 20, "display.width", 120):
+        logger.info("\n%s", agg_df.to_string())
+
+
+def plot_metric_heatmap(df: pd.DataFrame) -> None:
+    """
+    Heatmap of mean metrics per pipeline – gives an at-a-glance overview
+    of the precision/recall/F1/AUC trade-offs across all configurations.
+    """
+    df = df.copy()
+    df["label"] = df["model_name"] + " (" + df["strategy"] + ")"
+    pivot = df.groupby("label")[["f1_dropout","f1_macro",  "roc_auc", "precision_macro", "recall_macro"]].mean()
+    pivot = pivot.sort_values("f1_dropout", ascending=False).round(4)
+
+    fig, ax = plt.subplots(figsize=(10, max(5, len(pivot) * 0.5 + 2)))
+    sns.heatmap(
+        pivot, annot=True, fmt=".4f", cmap="YlOrRd",
+        linewidths=0.5, ax=ax,
+        cbar_kws={"label": "Score"},
+    )
+    ax.set_title("Pipeline Metric Heatmap (mean over outer folds)", fontweight="bold")
+    ax.set_ylabel("")
+    ax.set_xticklabels(
+        [ "F1-Dropout","F1-Macro", "ROC-AUC", "Precision-Macro", "Recall-Macro"],
+        rotation=25,
+    )
+    fig.tight_layout()
+    _savefig("experiments", "metric_heatmap.png")
+
 # ── Wilcoxon statistical tests ─────────────────────────────────────────────────
 def run_wilcoxon_tests(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -198,7 +228,7 @@ def run_wilcoxon_tests(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df["label"] = df["model_name"] + " (" + df["strategy"] + ")"
 
-    pivot = df.pivot_table(index="outer_fold", columns="label", values="f1_macro")
+    pivot = df.pivot_table(index="outer_fold", columns="label", values="f1_dropout")
     labels = pivot.columns.tolist()
 
     records = []
@@ -225,39 +255,6 @@ def run_wilcoxon_tests(df: pd.DataFrame) -> pd.DataFrame:
     logger.info("Wilcoxon test results saved.")
     return result_df
 
-
-def print_summary_table(agg_df: pd.DataFrame) -> None:
-    logger.info("\n=== AGGREGATED RESULTS (mean ± std across %d outer folds) ===", OUTER_CV_FOLDS)
-    with pd.option_context("display.max_rows", 40, "display.max_columns", 20, "display.width", 120):
-        logger.info("\n%s", agg_df.to_string())
-
-
-def plot_metric_heatmap(df: pd.DataFrame) -> None:
-    """
-    Heatmap of mean metrics per pipeline – gives an at-a-glance overview
-    of the precision/recall/F1/AUC trade-offs across all configurations.
-    """
-    df = df.copy()
-    df["label"] = df["model_name"] + " (" + df["strategy"] + ")"
-    pivot = df.groupby("label")[["f1_macro", "f1_dropout", "roc_auc", "precision_macro", "recall_macro"]].mean()
-    pivot = pivot.sort_values("f1_macro", ascending=False).round(4)
-
-    fig, ax = plt.subplots(figsize=(10, max(5, len(pivot) * 0.5 + 2)))
-    sns.heatmap(
-        pivot, annot=True, fmt=".4f", cmap="YlOrRd",
-        linewidths=0.5, ax=ax,
-        cbar_kws={"label": "Score"},
-    )
-    ax.set_title("Pipeline Metric Heatmap (mean over outer folds)", fontweight="bold")
-    ax.set_ylabel("")
-    ax.set_xticklabels(
-        ["F1-Macro", "F1-Dropout", "ROC-AUC", "Precision-Macro", "Recall-Macro"],
-        rotation=25,
-    )
-    fig.tight_layout()
-    _savefig("experiments", "metric_heatmap.png")
-
-
 def run_evaluation(df_results: pd.DataFrame, all_results: list[dict]) -> pd.DataFrame:
     """
     Orchestrate all evaluation plots and tables.
@@ -274,8 +271,8 @@ def run_evaluation(df_results: pd.DataFrame, all_results: list[dict]) -> pd.Data
     plot_f1_boxplot(df_results)
     plot_roc_curves(all_results)
     plot_confusion_matrices(all_results)
+    run_wilcoxon_tests(df_results)
     plot_metric_heatmap(df_results)
 
-    wilcoxon_df = run_wilcoxon_tests(df_results)
     logger.info("=== Evaluation complete ===")
     return agg_df

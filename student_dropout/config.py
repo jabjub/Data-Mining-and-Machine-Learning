@@ -1,5 +1,8 @@
 import os
 
+SKIP_RANDOM_SEARCH=True
+INCLUDE_SECOND_SEM_FEATURES=True
+
 # ── Reproducibility ────────────────────────────────────────────────────────────
 RANDOM_STATE = 42
 
@@ -17,7 +20,7 @@ LOGS_DIR        = os.path.join(RESULTS_DIR, "logs")
 
 # ── Target (project plan §4.0) ─────────────────────────────────────────────────
 TARGET_COL     = "Target"
-POSITIVE_CLASS = "Dropout"
+DROPOUT_CLASS = "Dropout"
 
 # ── 2nd-semester features to remove (project plan §4.1) ───────────────────────
 SECOND_SEM_FEATURES = [
@@ -71,15 +74,17 @@ NUMERICAL_FEATURES = [
     "Inflation rate",
     "GDP",
 ]
+if INCLUDE_SECOND_SEM_FEATURES :
+    NUMERICAL_FEATURES = NUMERICAL_FEATURES+SECOND_SEM_FEATURES
 
 # All features that receive StandardScaler (numerical + binary)
 SCALE_FEATURES = NUMERICAL_FEATURES + BINARY_FEATURES
 
 # ── Hyperparameter search spaces (project plan §7, §6) ────────────────────────
 # Keys must match the pipeline step name 'clf__<param>'
-PARAM_GRIDS = {
+PARAMS_RANDOM_SEARCH = {
     "LogisticRegression": {
-        "clf__C":        [0.001, 0.01, 0.1, 1, 10, 100],
+        "clf__C": [0.0001, 0.001, 0.01, 0.1, 1, 10, 100],
         "clf__solver":   ["lbfgs", "liblinear"],
         "clf__max_iter": [2000],
     },
@@ -89,17 +94,36 @@ PARAM_GRIDS = {
         "clf__metric":      ["euclidean", "manhattan"],
     },
     "RandomForest": {
-        "clf__n_estimators":    [100, 200, 300],
-        "clf__max_depth":       [None, 5, 10, 20],
-        "clf__min_samples_split": [2, 5, 10],
-        "clf__min_samples_leaf":  [1, 2, 4],
-        "clf__max_features":    ["sqrt", "log2"],
-    },
+        "clf__n_estimators":    [100, 200, 300,400],
+        "clf__max_depth":       [None, 5, 10, 20,30,40],
+        "clf__min_samples_split": [2, 5, 10,20],
+        "clf__min_samples_leaf":  [1, 2, 4,8],
+        "clf__max_features":    ["sqrt", "log2",None],
+        "clf__bootstrap":[True, False]
+
+    }, #Proved better but still not better than Logistic Regression
     "AdaBoost": {
+        "clf__estimator__max_depth":[1,2,3],
+        "clf__estimator__min_samples_leaf": [1, 2, 4],
+        "clf__estimator__min_samples_split": [2, 5, 10],
         "clf__n_estimators": [50, 100, 200, 300],
         "clf__learning_rate": [0.01, 0.05, 0.1, 0.5, 1.0],
     },
     "NaiveBayes": {
         "clf__var_smoothing": [1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4],
+    },
+}
+
+ # TEST ONLY LogisticRegression and AdaBoost since these are the classifiers which produce the best results
+PARAMS_GRID_SEARCH = {
+    "LogisticRegression": {
+        "clf__C": [0.05,0.1,0.2,0.5,1,2,5,10,20,],
+        "clf__solver": ["lbfgs","liblinear",],
+        "clf__max_iter": [2000 ]
+    }
+    ,
+    "AdaBoost": {
+        "clf__n_estimators": [250,275,300,325,350,400,],
+        "clf__learning_rate": [0.8,0.9, 1.0,1.1, 1.2,],
     },
 }

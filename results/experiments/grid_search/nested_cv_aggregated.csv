@@ -1,0 +1,10 @@
+model_name,strategy,f1_dropout_mean,f1_dropout_std,f1_macro_mean,f1_macro_std,roc_auc_mean,roc_auc_std,precision_macro_mean,precision_macro_std,recall_macro_mean,recall_macro_std
+LogisticRegression,baseline,0.7996,0.0211,0.8567,0.0152,0.9219,0.0102,0.8733,0.0167,0.8449,0.0145
+LogisticRegression,class_weight,0.7939,0.0069,0.8456,0.0049,0.9215,0.0097,0.8404,0.0045,0.852,0.0058
+LogisticRegression,smote,0.7928,0.0063,0.8447,0.0045,0.9207,0.0099,0.8394,0.0046,0.8514,0.0052
+RandomForest,class_weight,0.7896,0.0195,0.8472,0.0152,0.9164,0.0105,0.8541,0.0192,0.8415,0.0124
+RandomForest,smote,0.7876,0.016,0.8476,0.0119,0.9161,0.0102,0.8611,0.0141,0.8374,0.0105
+AdaBoost,baseline,0.7757,0.0099,0.8389,0.0069,0.9076,0.0091,0.8522,0.0114,0.8295,0.0079
+RandomForest,baseline,0.7752,0.0137,0.8419,0.0103,0.9169,0.0114,0.8712,0.0158,0.8246,0.0085
+AdaBoost,smote,0.7688,0.0093,0.8276,0.0077,0.9051,0.0097,0.8239,0.009,0.832,0.0063
+AdaBoost,class_weight,0.7311,0.0192,0.8005,0.0131,0.8457,0.0081,0.7983,0.0115,0.8032,0.0153

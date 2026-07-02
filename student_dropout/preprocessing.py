@@ -50,24 +50,18 @@ logger = logging.getLogger(__name__)
 STRATEGIES = ("baseline", "class_weight", "smote")
 
 # Classifiers that accept class_weight='balanced'
-_SUPPORTS_CLASS_WEIGHT = {"LogisticRegression", "RandomForest"}
+_SUPPORTS_CLASS_WEIGHT = {"LogisticRegression", "RandomForest","AdaBoost"} # AdaBoost supports it for DecisionTreeClassifier
 
 
 def build_preprocessor(num_features: list[str], cat_features: list[str]) -> ColumnTransformer:
     """
-    ColumnTransformer that applies:
-      - SimpleImputer (median) + StandardScaler  → numerical / binary features
-      - SimpleImputer (most_frequent) + OHE      → nominal categorical features
-
     Fitting happens only inside pipeline.fit(), so scaler and encoder parameters
     are derived exclusively from training data — no leakage.
     """
     numerical_pipe = Pipeline([
-        ("imputer", SimpleImputer(strategy="median")),
         ("scaler", StandardScaler()),
     ])
     categorical_pipe = Pipeline([
-        ("imputer", SimpleImputer(strategy="most_frequent")),
         ("ohe", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
     ])
     return ColumnTransformer(
@@ -134,7 +128,7 @@ def build_pipeline(
 
     steps = [("preprocessor", preprocessor)]
 
-    if strategy == "smote":
+    if strategy == "smote": # The other strategy , class_weight has been handled in _make_classifier(
         steps.append(("smote", SMOTE(random_state=RANDOM_STATE)))
 
     steps.append(("clf", clf))
@@ -150,7 +144,12 @@ def get_model_strategy_pairs() -> list[tuple[str, str]]:
     are tested for those models.
     """
     pairs = []
-    all_models = ["LogisticRegression", "KNN", "RandomForest", "AdaBoost", "NaiveBayes"]
+    all_models = [
+                "LogisticRegression",
+                  "AdaBoost",
+                  "RandomForest",
+                  "KNN", "NaiveBayes"
+                  ]
     for model in all_models:
         for strategy in STRATEGIES:
             if strategy == "class_weight" and model not in _SUPPORTS_CLASS_WEIGHT:

@@ -1,0 +1,218 @@
+2026-07-02 01:33:21,574 [INFO] main - ======================================================================
+2026-07-02 01:33:21,574 [INFO] main -   STUDENT DROPOUT PREDICTION - DMML Project Framework
+2026-07-02 01:33:21,574 [INFO] main - ======================================================================
+2026-07-02 01:33:21,575 [INFO] student_dropout.data_loader - Loading dataset from local file: predict_students_dropout_and_academic_success_data.csv
+2026-07-02 01:33:21,597 [WARNING] student_dropout.data_loader - The following expected columns were not found and will be skipped: {'Nationality'}
+2026-07-02 01:33:21,598 [WARNING] student_dropout.data_loader - Missing categorical features: {'Nationality'}
+2026-07-02 01:33:21,598 [INFO] student_dropout.data_loader - No missing values detected in the feature matrix.
+2026-07-02 01:33:21,614 [INFO] student_dropout.data_loader - Data ready: 4424 samples | 27 numerical | 8 categorical | class distribution: Dropout=32.1% Non-Dropout=67.9%
+2026-07-02 01:33:21,616 [INFO] main - Dataset: 4424 samples | 35 features | Dropout rate: 32.12%
+2026-07-02 01:33:21,616 [INFO] student_dropout.eda - === Running EDA ===
+2026-07-02 01:33:22,029 [INFO] student_dropout.eda - Saved: results\eda\01_class_distribution.png
+2026-07-02 01:33:23,552 [INFO] student_dropout.eda - Saved: results\eda\02_correlation_heatmap.png
+2026-07-02 01:33:28,242 [INFO] student_dropout.eda - Saved: results\eda\03_feature_histograms.png
+2026-07-02 01:33:29,378 [INFO] student_dropout.eda - Saved: results\eda\04_boxplots.png
+2026-07-02 01:33:29,536 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,536 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,550 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,550 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,553 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,553 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,553 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,553 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,565 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,566 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,569 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,569 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,603 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,603 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,603 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,603 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,628 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,629 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,630 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,631 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,650 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,651 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,651 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,652 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,669 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,669 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,669 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,669 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,685 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,685 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,685 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,685 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,715 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,716 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,717 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,718 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,735 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,735 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,752 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,752 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,769 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,769 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,781 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,782 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,796 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,796 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,802 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,802 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,818 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,818 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,818 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,818 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,835 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,835 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,835 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,835 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,849 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,849 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,849 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,849 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,851 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,863 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,863 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,863 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,869 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,869 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,869 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,869 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,885 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,885 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,885 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,885 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,931 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,931 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,962 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,962 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,994 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:29,994 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:30,026 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:30,042 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:30,074 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:30,079 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:30,113 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:30,114 [INFO] matplotlib.category - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-07-02 01:33:30,203 [INFO] student_dropout.eda - Saved: results\eda\05_categorical_dropout_rates.png
+2026-07-02 01:33:30,203 [INFO] student_dropout.eda - EDA complete. Plots saved to: results\eda
+2026-07-02 01:33:30,203 [INFO] student_dropout.experiments - === Starting Nested CV: 9 model-strategy pairs x 5 outer folds = 45 total ===
+2026-07-02 01:33:30,203 [INFO] student_dropout.experiments - >> LogisticRegression | strategy=baseline
+2026-07-02 01:33:36,979 [INFO] student_dropout.experiments -   Progress: 1 / 45
+2026-07-02 01:33:40,505 [INFO] student_dropout.experiments -   Progress: 2 / 45
+2026-07-02 01:33:40,976 [INFO] student_dropout.experiments -   Progress: 3 / 45
+2026-07-02 01:33:41,379 [INFO] student_dropout.experiments -   Progress: 4 / 45
+2026-07-02 01:33:41,776 [INFO] student_dropout.experiments -   Progress: 5 / 45
+2026-07-02 01:33:41,776 [INFO] student_dropout.experiments -   [OK] LogisticRegression | baseline -> F1_Dropout=0.7996 +/- 0.0188  AUC=0.9219
+2026-07-02 01:33:41,776 [INFO] student_dropout.experiments - >> LogisticRegression | strategy=class_weight
+2026-07-02 01:33:42,495 [INFO] student_dropout.experiments -   Progress: 6 / 45
+2026-07-02 01:33:42,901 [INFO] student_dropout.experiments -   Progress: 7 / 45
+2026-07-02 01:33:43,437 [INFO] student_dropout.experiments -   Progress: 8 / 45
+2026-07-02 01:33:43,915 [INFO] student_dropout.experiments -   Progress: 9 / 45
+2026-07-02 01:33:44,347 [INFO] student_dropout.experiments -   Progress: 10 / 45
+2026-07-02 01:33:44,347 [INFO] student_dropout.experiments -   [OK] LogisticRegression | class_weight -> F1_Dropout=0.7939 +/- 0.0061  AUC=0.9215
+2026-07-02 01:33:44,347 [INFO] student_dropout.experiments - >> LogisticRegression | strategy=smote
+2026-07-02 01:33:47,087 [INFO] student_dropout.experiments -   Progress: 11 / 45
+2026-07-02 01:33:48,086 [INFO] student_dropout.experiments -   Progress: 12 / 45
+2026-07-02 01:33:48,900 [INFO] student_dropout.experiments -   Progress: 13 / 45
+2026-07-02 01:33:50,510 [INFO] student_dropout.experiments -   Progress: 14 / 45
+2026-07-02 01:33:51,720 [INFO] student_dropout.experiments -   Progress: 15 / 45
+2026-07-02 01:33:51,720 [INFO] student_dropout.experiments -   [OK] LogisticRegression | smote -> F1_Dropout=0.7928 +/- 0.0056  AUC=0.9207
+2026-07-02 01:33:51,720 [INFO] student_dropout.experiments - >> AdaBoost | strategy=baseline
+2026-07-02 01:33:53,556 [INFO] student_dropout.experiments -   Progress: 16 / 45
+2026-07-02 01:33:55,233 [INFO] student_dropout.experiments -   Progress: 17 / 45
+2026-07-02 01:33:56,950 [INFO] student_dropout.experiments -   Progress: 18 / 45
+2026-07-02 01:33:58,509 [INFO] student_dropout.experiments -   Progress: 19 / 45
+2026-07-02 01:34:00,288 [INFO] student_dropout.experiments -   Progress: 20 / 45
+2026-07-02 01:34:00,288 [INFO] student_dropout.experiments -   [OK] AdaBoost | baseline -> F1_Dropout=0.7757 +/- 0.0088  AUC=0.9076
+2026-07-02 01:34:00,288 [INFO] student_dropout.experiments - >> AdaBoost | strategy=class_weight
+2026-07-02 01:34:01,266 [INFO] student_dropout.experiments -   Progress: 21 / 45
+2026-07-02 01:34:01,967 [INFO] student_dropout.experiments -   Progress: 22 / 45
+2026-07-02 01:34:02,268 [INFO] student_dropout.experiments -   Progress: 23 / 45
+2026-07-02 01:34:02,586 [INFO] student_dropout.experiments -   Progress: 24 / 45
+2026-07-02 01:34:02,883 [INFO] student_dropout.experiments -   Progress: 25 / 45
+2026-07-02 01:34:02,883 [INFO] student_dropout.experiments -   [OK] AdaBoost | class_weight -> F1_Dropout=0.7311 +/- 0.0172  AUC=0.8457
+2026-07-02 01:34:02,883 [INFO] student_dropout.experiments - >> AdaBoost | strategy=smote
+2026-07-02 01:34:06,284 [INFO] student_dropout.experiments -   Progress: 26 / 45
+2026-07-02 01:34:08,817 [INFO] student_dropout.experiments -   Progress: 27 / 45
+2026-07-02 01:34:11,335 [INFO] student_dropout.experiments -   Progress: 28 / 45
+2026-07-02 01:34:13,733 [INFO] student_dropout.experiments -   Progress: 29 / 45
+2026-07-02 01:34:16,285 [INFO] student_dropout.experiments -   Progress: 30 / 45
+2026-07-02 01:34:16,285 [INFO] student_dropout.experiments -   [OK] AdaBoost | smote -> F1_Dropout=0.7688 +/- 0.0083  AUC=0.9051
+2026-07-02 01:34:16,285 [INFO] student_dropout.experiments - >> RandomForest | strategy=baseline
+2026-07-02 01:34:17,550 [INFO] student_dropout.experiments -   Progress: 31 / 45
+2026-07-02 01:34:18,828 [INFO] student_dropout.experiments -   Progress: 32 / 45
+2026-07-02 01:34:21,193 [INFO] student_dropout.experiments -   Progress: 33 / 45
+2026-07-02 01:34:22,587 [INFO] student_dropout.experiments -   Progress: 34 / 45
+2026-07-02 01:34:23,815 [INFO] student_dropout.experiments -   Progress: 35 / 45
+2026-07-02 01:34:23,815 [INFO] student_dropout.experiments -   [OK] RandomForest | baseline -> F1_Dropout=0.7752 +/- 0.0123  AUC=0.9169
+2026-07-02 01:34:23,815 [INFO] student_dropout.experiments - >> RandomForest | strategy=class_weight
+2026-07-02 01:34:25,114 [INFO] student_dropout.experiments -   Progress: 36 / 45
+2026-07-02 01:34:26,430 [INFO] student_dropout.experiments -   Progress: 37 / 45
+2026-07-02 01:34:27,675 [INFO] student_dropout.experiments -   Progress: 38 / 45
+2026-07-02 01:34:28,972 [INFO] student_dropout.experiments -   Progress: 39 / 45
+2026-07-02 01:34:30,457 [INFO] student_dropout.experiments -   Progress: 40 / 45
+2026-07-02 01:34:30,457 [INFO] student_dropout.experiments -   [OK] RandomForest | class_weight -> F1_Dropout=0.7896 +/- 0.0175  AUC=0.9164
+2026-07-02 01:34:30,457 [INFO] student_dropout.experiments - >> RandomForest | strategy=smote
+2026-07-02 01:34:32,125 [INFO] student_dropout.experiments -   Progress: 41 / 45
+2026-07-02 01:34:33,701 [INFO] student_dropout.experiments -   Progress: 42 / 45
+2026-07-02 01:34:36,260 [INFO] student_dropout.experiments -   Progress: 43 / 45
+2026-07-02 01:34:38,067 [INFO] student_dropout.experiments -   Progress: 44 / 45
+2026-07-02 01:34:40,041 [INFO] student_dropout.experiments -   Progress: 45 / 45
+2026-07-02 01:34:40,041 [INFO] student_dropout.experiments -   [OK] RandomForest | smote -> F1_Dropout=0.7876 +/- 0.0143  AUC=0.9161
+2026-07-02 01:34:40,041 [INFO] student_dropout.experiments - === Nested CV complete: 45 results collected ===
+2026-07-02 01:34:40,086 [INFO] student_dropout.experiments - grid_search results saved to results\experiments\grid_search
+2026-07-02 01:34:40,086 [INFO] student_dropout.evaluation - === Running Evaluation ===
+2026-07-02 01:34:40,092 [INFO] student_dropout.evaluation - 
+=== AGGREGATED RESULTS (mean ± std across 5 outer folds) ===
+2026-07-02 01:34:40,099 [INFO] student_dropout.evaluation - 
+                                 f1_dropout_mean  f1_dropout_std  f1_macro_mean  f1_macro_std  roc_auc_mean  roc_auc_std  precision_macro_mean  precision_macro_std  recall_macro_mean  recall_macro_std
+model_name         strategy                                                                                                                                                                             
+LogisticRegression baseline               0.7996          0.0211         0.8567        0.0152        0.9219       0.0102                0.8733               0.0167             0.8449            0.0145
+                   class_weight           0.7939          0.0069         0.8456        0.0049        0.9215       0.0097                0.8404               0.0045             0.8520            0.0058
+                   smote                  0.7928          0.0063         0.8447        0.0045        0.9207       0.0099                0.8394               0.0046             0.8514            0.0052
+RandomForest       class_weight           0.7896          0.0195         0.8472        0.0152        0.9164       0.0105                0.8541               0.0192             0.8415            0.0124
+                   smote                  0.7876          0.0160         0.8476        0.0119        0.9161       0.0102                0.8611               0.0141             0.8374            0.0105
+AdaBoost           baseline               0.7757          0.0099         0.8389        0.0069        0.9076       0.0091                0.8522               0.0114             0.8295            0.0079
+RandomForest       baseline               0.7752          0.0137         0.8419        0.0103        0.9169       0.0114                0.8712               0.0158             0.8246            0.0085
+AdaBoost           smote                  0.7688          0.0093         0.8276        0.0077        0.9051       0.0097                0.8239               0.0090             0.8320            0.0063
+                   class_weight           0.7311          0.0192         0.8005        0.0131        0.8457       0.0081                0.7983               0.0115             0.8032            0.0153
+2026-07-02 01:34:40,652 [INFO] student_dropout.evaluation - Saved: results\experiments\model_f1_comparison.png
+2026-07-02 01:34:41,092 [INFO] student_dropout.evaluation - Saved: results\experiments\f1_boxplot.png
+2026-07-02 01:34:41,888 [INFO] student_dropout.evaluation - Saved: results\experiments\roc_curves.png
+2026-07-02 01:34:42,186 [INFO] student_dropout.evaluation - Saved: results\experiments\confusion_matrices\cm_LogisticRegression_baseline.png
+2026-07-02 01:34:42,582 [INFO] student_dropout.evaluation - Saved: results\experiments\confusion_matrices\cm_LogisticRegression_class_weight.png
+2026-07-02 01:34:42,915 [INFO] student_dropout.evaluation - Saved: results\experiments\confusion_matrices\cm_LogisticRegression_smote.png
+2026-07-02 01:34:43,219 [INFO] student_dropout.evaluation - Saved: results\experiments\confusion_matrices\cm_AdaBoost_baseline.png
+2026-07-02 01:34:43,583 [INFO] student_dropout.evaluation - Saved: results\experiments\confusion_matrices\cm_AdaBoost_class_weight.png
+2026-07-02 01:34:43,957 [INFO] student_dropout.evaluation - Saved: results\experiments\confusion_matrices\cm_AdaBoost_smote.png
+2026-07-02 01:34:44,290 [INFO] student_dropout.evaluation - Saved: results\experiments\confusion_matrices\cm_RandomForest_baseline.png
+2026-07-02 01:34:44,586 [INFO] student_dropout.evaluation - Saved: results\experiments\confusion_matrices\cm_RandomForest_class_weight.png
+2026-07-02 01:34:44,874 [INFO] student_dropout.evaluation - Saved: results\experiments\confusion_matrices\cm_RandomForest_smote.png
+2026-07-02 01:34:44,935 [INFO] student_dropout.evaluation - Wilcoxon test results saved.
+2026-07-02 01:34:45,692 [INFO] student_dropout.evaluation - Saved: results\experiments\metric_heatmap.png
+2026-07-02 01:34:45,692 [INFO] student_dropout.evaluation - === Evaluation complete ===
+2026-07-02 01:34:45,708 [INFO] student_dropout.experiments - Best configuration: model=LogisticRegression  strategy=baseline
+2026-07-02 01:34:45,708 [INFO] main - 
+>>> BEST PIPELINE: model=LogisticRegression  strategy=baseline
+2026-07-02 01:34:45,708 [INFO] main - Retraining best pipeline on full dataset for XAI...
+2026-07-02 01:34:45,708 [INFO] main - Using best-fold params for XAI refit: {'clf__max_iter': 2000, 'clf__solver': 'liblinear'}
+2026-07-02 01:34:45,787 [INFO] student_dropout.explainability - === Explainability: LogisticRegression ===
+2026-07-02 01:34:45,818 [INFO] student_dropout.explainability - Computing permutation importance for LogisticRegression...
+2026-07-02 01:34:52,799 [INFO] student_dropout.explainability - Saved: results\xai\feature_importance_permutation_LogisticRegression.png
+2026-07-02 01:34:54,518 [INFO] student_dropout.explainability - Saved: results\xai\shap_beeswarm_LogisticRegression.png
+2026-07-02 01:34:55,214 [INFO] student_dropout.explainability - Saved: results\xai\shap_bar_LogisticRegression.png
+2026-07-02 01:34:56,154 [INFO] student_dropout.explainability - Saved: results\xai\shap_waterfall_LogisticRegression.png
+2026-07-02 01:34:56,154 [INFO] student_dropout.explainability - Waterfall: student #7 | P(Dropout)=6.544
+2026-07-02 01:34:56,154 [INFO] student_dropout.explainability - === Explainability complete ===
+2026-07-02 01:34:56,154 [INFO] main - Running feature-importance-only XAI for RandomForest...
+2026-07-02 01:34:56,154 [INFO] main - ======================================================================
+2026-07-02 01:34:56,154 [INFO] main -   EXPERIMENT COMPLETE  (total runtime: 1.6 min)
+2026-07-02 01:34:56,154 [INFO] main -   Best model  : LogisticRegression
+2026-07-02 01:34:56,154 [INFO] main -   Strategy    : baseline
+2026-07-02 01:34:56,169 [INFO] main -   Mean F1-Mac : 0.8567
+2026-07-02 01:34:56,169 [INFO] main -   Mean AUC    : 0.9219
+2026-07-02 01:34:56,169 [INFO] main -   Results dir : results/
+2026-07-02 01:34:56,169 [INFO] main - ======================================================================
