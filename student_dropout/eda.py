@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from student_dropout.config import EDA_DIR, NUMERICAL_FEATURES, POSITIVE_CLASS
+from student_dropout.config import EDA_DIR, NUMERICAL_FEATURES
 
 logger = logging.getLogger(__name__)
 

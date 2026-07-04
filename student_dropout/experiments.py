@@ -53,13 +53,13 @@ from sklearn.metrics import (
     roc_auc_score,
     classification_report,
 )
-from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold
+from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, GridSearchCV
 
 from student_dropout.config import (
     EXPERIMENT_DIR,
     INNER_CV_FOLDS,
     OUTER_CV_FOLDS,
-    PARAM_GRIDS,
+    PARAMS_RANDOM_SEARCH,
     RANDOM_STATE,
     RANDOMIZED_SEARCH_ITER,
 )
@@ -91,23 +91,42 @@ def _evaluate_fold(
     X_test: np.ndarray,
     y_test: np.ndarray,
     fold_idx: int,
+    search_class=RandomizedSearchCV,
 ) -> dict[str, Any]:
     """
     Run the inner RandomizedSearchCV on the training fold, then evaluate the
-    best estimator on the held-out test fold.  SMOTE (when present) is applied
-    only during the inner fit(), never touching the test fold.
+    best estimator on the held-out test fold.
+
+    After finding the 2 best models with  RandomizedSearchCV ,zoom in their parameters
+    to execute a GridSeachCV in main.py to improve the performance even more .
+    After RandomizedSearchCV tests, we found that AdaBoost and LogisticRegression were the best classifiers so we focus on them
+
     """
-    search = RandomizedSearchCV(
-        estimator=pipeline,
-        param_distributions=param_grid,
-        n_iter=RANDOMIZED_SEARCH_ITER,
-        cv=_inner_cv(),
-        scoring="f1_macro",
-        refit=True,
-        n_jobs=-1,
-        random_state=RANDOM_STATE,
-        error_score="raise",
-    )
+    if search_class is RandomizedSearchCV:
+
+        search = RandomizedSearchCV(
+            estimator=pipeline,
+            param_distributions=param_grid,
+            n_iter=RANDOMIZED_SEARCH_ITER,
+            cv=_inner_cv(),
+            scoring="f1",
+            refit=True,
+            n_jobs=-1,
+            random_state=RANDOM_STATE,
+            error_score="raise",
+        )
+
+    else:
+
+        search = GridSearchCV(
+            estimator=pipeline,
+            param_grid=param_grid,
+            cv=_inner_cv(),
+            scoring="f1",
+            refit=True,
+            n_jobs=-1,
+            error_score="raise",
+        )
 
     t0 = time.perf_counter()
     search.fit(X_train, y_train)
@@ -151,6 +170,8 @@ def run_nested_cv(
     y: pd.Series,
     num_features: list[str],
     cat_features: list[str],
+    search_class=RandomizedSearchCV,
+    parameter_grids=PARAMS_RANDOM_SEARCH,
 ) -> list[dict[str, Any]]:
     """
     Execute the full nested CV benchmark over all (model, strategy) pairs.
@@ -175,7 +196,7 @@ def run_nested_cv(
 
     done = 0
     for model_name, strategy in pairs:
-        param_grid = PARAM_GRIDS.get(model_name, {})
+        param_grid = parameter_grids.get(model_name, {})
         fold_results = []
 
         logger.info(">> %s | strategy=%s", model_name, strategy)
@@ -190,7 +211,7 @@ def run_nested_cv(
             try:
                 result = _evaluate_fold(
                     model_name, strategy, pipeline, param_grid,
-                    X_train, y_train, X_test, y_test, fold_idx,
+                    X_train, y_train, X_test, y_test, fold_idx,search_class=search_class
                 )
                 fold_results.append(result)
                 all_results.append(result)
@@ -203,11 +224,11 @@ def run_nested_cv(
             logger.info("  Progress: %d / %d", done, total)
 
         if fold_results:
-            mean_f1 = np.mean([r["f1_macro"] for r in fold_results])
-            std_f1  = np.std([r["f1_macro"] for r in fold_results])
+            mean_f1 = np.mean([r["f1_dropout"] for r in fold_results])
+            std_f1 = np.std([r["f1_dropout"] for r in fold_results])
             mean_auc = np.mean([r["roc_auc"] for r in fold_results if not np.isnan(r["roc_auc"])])
             logger.info(
-                "  [OK] %s | %s -> F1=%.4f +/- %.4f  AUC=%.4f",
+                "  [OK] %s | %s -> F1_Dropout=%.4f +/- %.4f  AUC=%.4f",
                 model_name, strategy, mean_f1, std_f1, mean_auc,
             )
 
@@ -225,8 +246,8 @@ def results_to_dataframe(all_results: list[dict]) -> pd.DataFrame:
             "model_name":       r["model_name"],
             "strategy":         r["strategy"],
             "outer_fold":       r["outer_fold"],
-            "f1_macro":         r["f1_macro"],
             "f1_dropout":       r["f1_dropout"],
+            "f1_macro":         r["f1_macro"],
             "roc_auc":          r["roc_auc"],
             "precision_macro":  r["precision_macro"],
             "recall_macro":     r["recall_macro"],
@@ -241,32 +262,39 @@ def aggregate_results(df: pd.DataFrame) -> pd.DataFrame:
     Compute mean ± std across outer folds for each (model, strategy) pair.
     This is the table that goes directly into the defence presentation.
     """
-    numeric_cols = ["f1_macro", "f1_dropout", "roc_auc", "precision_macro", "recall_macro"]
+    numeric_cols = [ "f1_dropout","f1_macro", "roc_auc", "precision_macro", "recall_macro"]
     agg = (
-        df.groupby(["model_name", "strategy"])[numeric_cols]
+        df.groupby(["model_name","strategy"])[numeric_cols]
         .agg(["mean", "std"])
         .round(4)
     )
     agg.columns = ["_".join(c) for c in agg.columns]
-    return agg.sort_values("f1_macro_mean", ascending=False)
+    return agg.sort_values("f1_dropout_mean", ascending=False)   # TODO REVERT BACK TO f1_macro_mean
 
 
 def find_best_configuration(agg_df: pd.DataFrame) -> tuple[str, str]:
     """
     Selection rule (project plan §9):
-      1. Highest mean F1-macro
+      1. Highest mean F1-Binary
       2. ROC-AUC as tie-breaker
     """
     top = agg_df.sort_values(
-        ["f1_macro_mean", "roc_auc_mean"], ascending=[False, False]
+        ["f1_dropout_mean", "roc_auc_mean","f1_macro_mean"], ascending=[False, False,False]
     ).iloc[0]
     idx = top.name  # (model_name, strategy)
     logger.info("Best configuration: model=%s  strategy=%s", idx[0], idx[1])
     return idx[0], idx[1]
 
 
-def save_results(df: pd.DataFrame, agg_df: pd.DataFrame) -> None:
-    os.makedirs(EXPERIMENT_DIR, exist_ok=True)
-    df.to_csv(os.path.join(EXPERIMENT_DIR, "nested_cv_raw.csv"), index=False)
-    agg_df.to_csv(os.path.join(EXPERIMENT_DIR, "nested_cv_aggregated.csv"))
-    logger.info("Experiment results saved to %s", EXPERIMENT_DIR)
+def save_results(df: pd.DataFrame,agg_df: pd.DataFrame,search_name: str="random_search",) -> None:
+    results_dir = os.path.join(EXPERIMENT_DIR, search_name)
+    os.makedirs(results_dir, exist_ok=True)
+    df.to_csv(
+        os.path.join(results_dir, "nested_cv_raw.csv"),
+        index=False,
+    )
+    agg_df.to_csv(
+        os.path.join(results_dir, "nested_cv_aggregated.csv")
+    )
+
+    logger.info("%s results saved to %s", search_name, results_dir)

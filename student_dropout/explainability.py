@@ -5,10 +5,8 @@ Explainable AI module - ADMML5 recommended XAI workflow:
   2. SHAP beeswarm                           - global: direction + feature values
   3. SHAP bar                                - global: magnitude ranking
   4. SHAP waterfall                          - local: one high-risk student
-  5. SHAP scatter/dependence                 - top-3 feature effects
-  6. LIME                                    - local cross-check of waterfall
 
-SHAP explainer selection (model_output='probability' per ADMML5 guidance):
+SHAP explainer selection (model_output='probability'):
   RandomForest / AdaBoost  -> TreeExplainer (interventional perturbation)
   LogisticRegression       -> LinearExplainer
   KNN / NaiveBayes         -> KernelExplainer (wrapped into Explanation object)
@@ -60,12 +58,12 @@ def _safe_feature_names(feature_names, n_features):
 
 
 def _attach_names(sv, feature_names):
-    """Set feature names on SHAP Explanation if absent."""
+    """Force-set feature names on SHAP Explanation."""
     if sv is None:
         return sv
     n = sv.values.shape[1] if sv.values.ndim >= 2 else sv.values.shape[0]
-    if not getattr(sv, "feature_names", None):
-        sv.feature_names = _safe_feature_names(feature_names, n)
+    # Always overwrite — SHAP may have set generic placeholders already
+    sv.feature_names = _safe_feature_names(feature_names, n)
     return sv
 
 
@@ -85,11 +83,12 @@ def plot_feature_importance(
     """
     clf = pipeline.named_steps["clf"]
 
+
     if hasattr(clf, "feature_importances_"):
         importances = clf.feature_importances_
         if len(importances) == len(feature_names):
             idx = np.argsort(importances)[::-1]
-            top_n = min(25, len(importances))
+            top_n = min(15, len(importances))
             fig, ax = plt.subplots(figsize=(10, 8))
             ax.barh(
                 [feature_names[i] for i in idx[:top_n]][::-1],
@@ -108,16 +107,19 @@ def plot_feature_importance(
                 clf, X_transformed, y,
                 n_repeats=10, random_state=42, scoring="f1_macro", n_jobs=-1,
             )
+
             idx = np.argsort(perm.importances_mean)[::-1]
-            top_n = min(25, len(idx))
+            top_n = min(15, len(idx))
             names = _safe_feature_names(feature_names, len(idx))
             fig, ax = plt.subplots(figsize=(10, 8))
             ax.barh(
-                [names[i] for i in idx[:top_n]][::-1],
-                perm.importances_mean[idx[:top_n]][::-1],
+                [names[i] for i in idx[:top_n]] [::-1],
+                perm.importances_mean[idx[:top_n]] [::-1],
                 xerr=perm.importances_std[idx[:top_n]][::-1],
                 color="darkorange", edgecolor="black",
             )
+            # ax.set_xlim(0, 0.3)
+            ax.set_xticks(np.arange(0, 0.20, 0.05))
             ax.axvline(0, color="red", linestyle="--", alpha=0.5, label="No effect baseline")
             ax.set_xlabel("Mean F1-macro drop when feature is shuffled", fontsize=11)
             ax.set_title(f"Permutation Importance - {model_name}", fontweight="bold")
@@ -144,7 +146,7 @@ def _build_shap_explanation(clf, X_transformed: np.ndarray, model_name: str):
     rng = np.random.default_rng(42)
     bg_idx = rng.choice(n, size=min(100, n), replace=False)
     bg = X_transformed[bg_idx]
-    n_explain = min(500, n)
+    n_explain = min(25, n)
     X_explain = X_transformed[:n_explain]
 
     try:
@@ -164,7 +166,7 @@ def _build_shap_explanation(clf, X_transformed: np.ndarray, model_name: str):
             explainer = shap.LinearExplainer(clf, bg)
             sv = explainer(X_explain)
             if sv.values.ndim == 3:
-                return sv[:, :, 1]
+                return sv[:, :, 1] # Return the XAI results for the Drop class only
             return sv
 
         # KNN / NaiveBayes: model-agnostic KernelExplainer (slow)
@@ -206,14 +208,23 @@ def plot_shap_beeswarm(sv_class, feature_names: list, model_name: str) -> None:
     _savefig(f"shap_beeswarm_{model_name}.png")
 
 
-def plot_shap_bar(sv_class, feature_names: list, model_name: str) -> None:
-    """Global SHAP bar: mean |SHAP| magnitude ranking."""
-    import shap
-    if sv_class is None:
-        return
-    _attach_names(sv_class, feature_names)
-    shap.plots.bar(sv_class, max_display=20, show=False)
-    plt.title(f"SHAP Mean |SHAP| (Bar) - {model_name}", fontweight="bold")
+def plot_shap_bar(sv_class, feature_names: list, model_name: str,count_y=20) -> None:
+    mean_abs = np.abs(sv_class.values).mean(axis=0)
+
+    idx = np.argsort(mean_abs)[::-1][:count_y]
+
+    fig, ax = plt.subplots(figsize=(15, 12))
+
+    ax.barh(
+        [feature_names[i] for i in idx][::-1],
+        mean_abs[idx][::-1],
+        color="deeppink"
+    )
+
+    ax.set_xlabel("mean(|SHAP value|)")
+    ax.set_title(f"SHAP Mean |SHAP| - {model_name}")
+
+    plt.tight_layout()
     _savefig(f"shap_bar_{model_name}.png")
 
 
@@ -221,8 +232,7 @@ def plot_shap_waterfall(sv_class, feature_names: list, model_name: str) -> int:
     """
     SHAP waterfall: local explanation for the highest-risk student.
 
-    From ADMML5 recommended workflow: 'SHAP waterfall for one prediction'.
-    Answers: why did the model give THIS student a high dropout probability?
+    why did the model give THIS student a high dropout probability?
     The student with the highest predicted probability is chosen as the most
     actionable case for early intervention.
     """
@@ -248,134 +258,6 @@ def plot_shap_waterfall(sv_class, feature_names: list, model_name: str) -> int:
     )
     return high_risk_idx
 
-
-def plot_shap_dependence(sv_class, feature_names: list, model_name: str, top_n: int = 3) -> None:
-    """SHAP scatter plot for top-N most impactful features."""
-    import shap
-    if sv_class is None:
-        return
-    _attach_names(sv_class, feature_names)
-
-    mean_abs = np.abs(sv_class.values).mean(axis=0)
-    top_indices = np.argsort(mean_abs)[::-1][:top_n]
-
-    for rank, feat_idx in enumerate(top_indices):
-        n = sv_class.values.shape[1]
-        feat_name = (feature_names[feat_idx] if feat_idx < len(feature_names)
-                     else f"feat_{feat_idx}")
-        safe_name = feat_name.replace("/", "_").replace(" ", "_")[:40]
-        try:
-            shap.plots.scatter(sv_class[:, feat_idx], color=sv_class, show=False)
-            plt.title(f"SHAP Scatter - {feat_name} | {model_name}", fontweight="bold")
-            _savefig(f"shap_dependence_{model_name}_{rank+1}_{safe_name}.png")
-        except Exception:
-            try:
-                fig, ax = plt.subplots(figsize=(8, 5))
-                shap.dependence_plot(
-                    feat_idx, sv_class.values, sv_class.data,
-                    feature_names=_safe_feature_names(feature_names, n),
-                    ax=ax, show=False, alpha=0.5,
-                )
-                ax.set_title(f"SHAP Dependence - {feat_name} | {model_name}", fontweight="bold")
-                _savefig(f"shap_dependence_{model_name}_{rank+1}_{safe_name}.png")
-            except Exception as exc2:
-                logger.warning("SHAP dependence failed for feat %d: %s", feat_idx, exc2)
-
-
-# ── 6. LIME (manual Ridge surrogate, ADMML5 lecture implementation) ───────────
-
-def run_lime_local(
-    clf,
-    X_transformed: np.ndarray,
-    feature_names: list,
-    model_name: str,
-    sample_idx: int = None,
-) -> None:
-    """
-    LIME local explanation — manual implementation matching ADMML5 slides 23-25.
-
-    Steps (identical to the course code):
-    1. Pick highest-risk student (or given index)
-    2. Generate 2500 Gaussian neighbours (scale=0.25 * feature_std)
-    3. Clip to observed feature range
-    4. Query black-box: clf.predict_proba -> P(Dropout)
-    5. Weight by Gaussian kernel (kernel_width = 0.75 * sqrt(p))
-    6. Fit weighted Ridge surrogate in standardised space
-    7. Plot local coefficients as bar chart
-
-    Using the same student as the SHAP waterfall allows direct comparison:
-    'Does LIME agree with SHAP on which features drive this student's risk?'
-    """
-    if not hasattr(clf, "predict_proba"):
-        logger.info("LIME skipped for %s (no predict_proba).", model_name)
-        return
-
-    logger.info("Running LIME for %s...", model_name)
-    try:
-        proba = clf.predict_proba(X_transformed)[:, 1]
-        if sample_idx is None:
-            sample_idx = int(np.argmax(proba))
-        x0 = X_transformed[sample_idx]
-        logger.info(
-            "LIME: student #%d | P(Dropout)=%.3f", sample_idx, proba[sample_idx]
-        )
-
-        rng = np.random.default_rng(42)
-        feature_std = X_transformed.std(axis=0).clip(min=1e-8)
-        n_perturb = 2500
-        Z = rng.normal(
-            loc=x0, scale=0.25 * feature_std,
-            size=(n_perturb, X_transformed.shape[1]),
-        )
-        Z = Z.clip(X_transformed.min(axis=0), X_transformed.max(axis=0))
-
-        black_box_output = clf.predict_proba(Z)[:, 1]
-
-        feature_mean = X_transformed.mean(axis=0)
-        Z_scaled = (Z - feature_mean) / feature_std
-        x0_scaled = (x0 - feature_mean) / feature_std
-        distances = np.sqrt(((Z_scaled - x0_scaled) ** 2).sum(axis=1))
-        kernel_width = 0.75 * np.sqrt(X_transformed.shape[1])
-        weights = np.exp(-(distances ** 2) / (kernel_width ** 2) / 2)
-
-        local_model = Ridge(alpha=0.1)
-        local_model.fit(Z_scaled, black_box_output, sample_weight=weights)
-        r2 = r2_score(
-            black_box_output,
-            local_model.predict(Z_scaled),
-            sample_weight=weights,
-        )
-        logger.info("LIME surrogate weighted-R2=%.3f", r2)
-
-        n_coef = min(len(local_model.coef_), len(feature_names))
-        lime_coefs = pd.Series(
-            local_model.coef_[:n_coef], index=feature_names[:n_coef]
-        )
-        lime_top = lime_coefs.reindex(lime_coefs.abs().nlargest(15).index)
-        colors = ["tomato" if c > 0 else "steelblue" for c in lime_top]
-
-        fig, ax = plt.subplots(figsize=(10, 7))
-        lime_top.plot(kind="barh", ax=ax, color=colors, edgecolor="black")
-        ax.axvline(0, color="black", linewidth=0.8)
-        ax.set_xlabel(
-            f"Local coefficient (positive = raises P(Dropout) near student #{sample_idx})",
-            fontsize=9,
-        )
-        ax.set_title(
-            f"LIME Local Explanation - {model_name} | Student #{sample_idx}\n"
-            f"P(Dropout)={proba[sample_idx]:.3f}  |  Surrogate weighted-R2={r2:.3f}",
-            fontweight="bold",
-        )
-        fig.tight_layout()
-        _savefig(f"lime_local_{model_name}.png")
-
-        top5 = lime_coefs.abs().nlargest(5).index.tolist()
-        logger.info("LIME top-5 factors for student #%d: %s", sample_idx, top5)
-
-    except Exception as exc:
-        logger.error("LIME failed for %s: %s", model_name, exc, exc_info=True)
-
-
 # ── Orchestrator ───────────────────────────────────────────────────────────────
 
 def run_explainability(pipeline, X, y: np.ndarray, model_name: str) -> None:
@@ -395,6 +277,7 @@ def run_explainability(pipeline, X, y: np.ndarray, model_name: str) -> None:
     feature_names = get_feature_names_out(pipeline)
 
     X_transformed = _transform_X(pipeline, X)
+
     clf = pipeline.named_steps["clf"]
 
     # Step 1: MDI + Permutation importance
@@ -408,13 +291,9 @@ def run_explainability(pipeline, X, y: np.ndarray, model_name: str) -> None:
         if sv_class is not None:
             _attach_names(sv_class, feature_names)
             plot_shap_beeswarm(sv_class, feature_names, model_name)
-            plot_shap_bar(sv_class, feature_names, model_name)
+            plot_shap_bar(sv_class, feature_names, model_name,25)
             high_risk_idx = plot_shap_waterfall(sv_class, feature_names, model_name)
-            plot_shap_dependence(sv_class, feature_names, model_name, top_n=3)
     except Exception as exc:
         logger.error("SHAP failed for %s: %s", model_name, exc, exc_info=True)
-
-    # Step 6: LIME — same student as waterfall for direct SHAP vs LIME comparison
-    run_lime_local(clf, X_transformed, feature_names, model_name, sample_idx=high_risk_idx)
 
     logger.info("=== Explainability complete ===")
